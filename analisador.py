@@ -154,6 +154,13 @@ def resumo_financeiro(conn):
 def apagar_transacao(conn):
     cursor = conn.cursor()
     mostrar_extrato(conn)
+    option = input("\nDeseja apagar todas as transações? (s/n): ").strip().lower()
+    if option == 's':
+        cursor.execute("DELETE FROM transacoes")
+        conn.commit()
+        print("Sucesso: Todas as transações foram apagadas.")
+        return
+    
     try:
         transacao_id = int(input("\nDigite o ID da transação que deseja apagar: "))
         cursor.execute("SELECT * FROM transacoes WHERE id = ?", (transacao_id,))
