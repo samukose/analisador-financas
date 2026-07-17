@@ -132,6 +132,21 @@ def resumo_financeiro(conn):
 
     saldo = total_receitas + total_despesas
 
+    if month := input("Deseja filtrar por mês? (s/n): ").strip().lower() == 's':
+        mes = input("Digite o mês (MM): ")
+        ano = input("Digite o ano (YYYY): ")
+        cursor.execute("""
+            SELECT SUM(valor) FROM transacoes 
+            WHERE valor > 0 AND strftime('%m', data) = ? AND strftime('%Y', data) = ?
+        """, (mes, ano))
+        total_receitas = cursor.fetchone()[0] or 0
+
+        cursor.execute("""
+            SELECT SUM(valor) FROM transacoes 
+            WHERE valor < 0 AND strftime('%m', data) = ? AND strftime('%Y', data) = ?
+        """, (mes, ano))
+        total_despesas = cursor.fetchone()[0] or 0
+
     print("\n--- Resumo Financeiro ---")
     print(f"Total de Receitas: R$ {total_receitas:.2f}")
     print(f"Total de Despesas: R$ {abs(total_despesas):.2f}")
